@@ -1,0 +1,9 @@
+psutil
+py-cpuinfo
+pynvml
+urllib3
+grpcio
+protobuf==3.19.6
+flask
+dataclasses
+numpy

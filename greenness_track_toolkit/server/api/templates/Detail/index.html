@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="https://img.alicdn.com/imgextra/i3/O1CN016uOczi1TdXLKXLZSA_!!6000000002405-2-tps-172-170.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="https://img.alicdn.com/imgextra/i3/O1CN016uOczi1TdXLKXLZSA_!!6000000002405-2-tps-172-170.png" type="image/x-icon" />
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/dist/css/bootstrap.min.css') }}">
+
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/Detail/index.css') }}"/>
+  <title>Details</title>
+</head>
+<body>
+  <!-- 导航栏 -->
+  <nav class="navbarHeader">
+    <div>Automatic AI Model Greenness Track Toolkit</div>
+    <div>Dashboard</div>
+  </nav>
+  <!-- 面包屑 -->
+  <div class="bread">
+    <span>Home</span>
+    <span class="separator">/</span>
+    <span onclick="window.location.href='/'">Dashboard</span>
+    <span class="separator">/</span>
+    <span>Details</span>
+  </div>
+  <!-- 内容 -->
+  <div class="content">
+    <!-- information -->
+    <div class="information common">
+      <p class="title">Information</p>
+      <div class="containers">
+        <div class="row row-cols-xl-4">
+          <div class="col">
+            <p>CPU TYPE</p>
+            <p><a href="#">{{rep.cpuType}}</a></p>
+          </div>
+          <div class="col">
+            <p>CPU NUM</p>
+            <p><a href="#">{{rep.cpuNum}}</a></p>
+          </div>
+          <div>
+            <p>GPU TYPE</p>
+            {%if rep.gpuType %}
+              {%for gpu in rep.gpuType.split(",")%}
+                <p><a href="#">{{gpu}}</a></p>
+              {%endfor%}
+            {% endif%}
+          </div>
+          <div class="col">
+            <p>GPU NUM</p>
+            <p><a href="#">{{rep.gpuNum}}</a></p>
+          </div>
+          <div class="col">
+            <p>OWNER</p>
+            <p><a href="#">{{rep.owner}}</a></p>
+          </div>
+          <div class="col">
+            <p>CREATED TIME</p>
+            <p><a href="#">{{rep.createTime}}</a></p>
+          </div>
+          <div class="col">
+            <p>END TIME</p>
+            <p><a href="#">{{rep.endTime}}</a></p>
+          </div>
+          <div class="col">
+            <p>TIME SPENT</p>
+            <p><a href="">{{rep.timeSpend}}s</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- computations -->
+    <div class="computations common">
+      <p class="title">Computations</p>
+      <p class="total">
+        <span>Total:</span>
+        <span>{{rep.flopsTotal}} GFLOPs</span>
+      </p>
+      <div class="echarts">
+        <div id="computations"></div>
+      </div>
+    </div>
+    <!-- energy -->
+    <div class="energy common">
+      <p class="title">Energy Costs</p>
+      <p class="total">
+        <span>Total:</span>
+        <span>{{rep.energyTotal}} kW·h</span>
+      </p>
+      <div class="echarts">
+        <div id="energy"></div>
+      </div>
+    </div>
+    <!-- energy -->
+    <div class="carbon common">
+      <p class="title">Carbon Emissions</p>
+      <p class="total">
+        <span>Total:</span>
+        <span>{{rep.co2Total}} kg</span>
+      </p>
+      <div class="echarts">
+        <div id="carbon"></div>
+      </div>
+    </div>
+  </div>
+
+<script src="{{ url_for('static', filename='bootstrap/echarts.js') }}"></script>
+<script type="application/javascript">
+
+  window.onload = function () {
+  // -------------- computations --------------
+  const  flops_date=[]
+    const flops_data=[]
+    {% for line in rep.flopsLine %}
+      flops_date.push('{{line.date}}')
+      flops_data.push({{line.value}})
+    {% endfor %}
+  const chartDom = document.getElementById('computations');
+  const myChart = echarts.init(chartDom);
+  const computationsOption = {
+    grid: {
+      left: '4%',
+      right: '2%'
+    },
+    xAxis: {
+      type: 'category',
+      data: flops_date
+    },
+    yAxis: {
+      type: 'value',
+      name: 'GFLOPs',
+      nameLocation: 'end',
+      nameTextStyle: {
+        fontSize: 18,
+        padding: [0, 0, 0, 32]
+      }
+    },
+    series: [
+      {
+        data: flops_data,
+        type: 'line',
+        symbol: 'none'
+      }
+    ]
+  };
+
+  computationsOption && myChart.setOption(computationsOption);
+  // -------------- energy --------------
+  const energyDom = document.getElementById('energy');
+  const energyChart = echarts.init(energyDom);
+    const  energy_date=[]
+    const energy_data=[]
+    {% for line in rep.energyLine %}
+      energy_date.push('{{line.date}}')
+      energy_data.push({{line.value}})
+    {% endfor%}
+  const energyOption = {
+    grid: {
+      left: '4%',
+      right: '2%'
+    },
+    xAxis: {
+      type: 'category',
+      data: energy_date
+    },
+    yAxis: {
+      type: 'value',
+      name: 'kW·h',
+      nameLocation: 'end',
+      nameTextStyle: {
+        fontSize: 18,
+        padding: 9,
+      }
+    },
+    series: [
+      {
+        data: energy_data,
+        type: 'line',
+        symbol: 'none'
+      }
+    ]
+  };
+
+  energyOption && energyChart.setOption(energyOption);
+  // -------------- carbon --------------
+  const carbonDom = document.getElementById('carbon');
+  const carbonChart = echarts.init(carbonDom);
+  const  carbon_date=[]
+    const carbon_data=[]
+    {% for line in rep.co2Line %}
+      carbon_date.push('{{line.date}}')
+      carbon_data.push({{line.value}})
+    {% endfor%}
+  const carbonOption = {
+    grid: {
+      left: '4%',
+      right: '2%'
+    },
+    xAxis: {
+      type: 'category',
+      data: carbon_date
+    },
+    yAxis: {
+      type: 'value',
+      name: 'kg',
+      nameLocation: 'end',
+      nameTextStyle: {
+        fontSize: 18,
+        padding: [0, 0, 0, -16],
+
+      }
+    },
+    series: [
+      {
+        data:carbon_data,
+        type: 'line',
+        symbol: 'none'
+      }
+    ]
+  };
+
+  carbonOption && carbonChart.setOption(carbonOption);
+  window.addEventListener('resize', () => {
+    myChart.resize();
+    energyChart.resize();
+    carbonChart.resize();
+  });
+}
+
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+@media (min-width: 768px) {
+  .navbar {
+    border-radius: 0;
+  }
+}
+
+.navbarHeader {
+  height: 53px;
+  padding-left: 50px;
+  background-color: #5355ff;
+  color: #fff;
+  display: flex;
+  align-items: center;
+}
+
+.navbarHeader div:nth-child(2) {
+  margin-left: 5%;
+  padding: 14px;
+  background-color: #403ded;
+}
+
+.bread {
+  padding: 15px 15px 15px 50px;
+}
+
+.bread span {
+  color: #b7b7b7;
+}
+
+.bread .separator {
+  margin: 0 .5%;
+}
+
+.bread span:nth-last-child(1) {
+  color: #5a5a5a;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 25px 50px;
+  background-color: #efeff5;
+}
+.information > .containers {
+  padding-left: 12px;
+}
+.information > .containers > .row > .col > p:nth-child(2) {
+  font-size: 18px;
+}
+
+.common {
+  padding: 15px;
+  background-color: #fff;
+  margin-bottom: 25px;
+}
+
+.common > .title {
+  padding-left: 12px;
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.common > .total {
+  color: #5b5b5b;
+  text-align: center;
+  font-size: 24px;
+  font-weight: 500;
+}
+.common > .total > span:nth-child(2) {
+  color: #2d2d2d;
+  margin-left: 5px;
+}
+
+.information .containers .col p:nth-child(2) a {
+  color: #6368ff;
+  text-decoration: none;
+}
+.common > .echarts > div {
+  width: 100%;
+  height: 400px;
+}

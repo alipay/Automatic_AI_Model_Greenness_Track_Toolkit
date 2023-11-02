@@ -1,0 +1,12 @@
+// python -m grpc_tools.protoc -I greenness_track_toolkit/rpc/protos --python_out=greenness_track_toolkit/rpc --grpc_python_out=greenness_track_toolkit/rpc greenness_track_toolkit/rpc/protos/common.protos
+syntax = "proto3";
+
+package greenness_track_toolkit.rpc;
+enum ResultCode{
+    OK = 0;
+    ERROR = 1;
+  };
+message BaseResponse{
+  ResultCode resultCode=1;
+  string message=2;
+}

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="icon" href="https://img.alicdn.com/imgextra/i3/O1CN016uOczi1TdXLKXLZSA_!!6000000002405-2-tps-172-170.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="https://img.alicdn.com/imgextra/i3/O1CN016uOczi1TdXLKXLZSA_!!6000000002405-2-tps-172-170.png" type="image/x-icon" />
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/dist/css/bootstrap.min.css') }}">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/Dashboard/index.css') }}"/>
+    <title>Dashboard</title>
+    <script type="application/javascript">
+
+        function query() {
+            let owner = document.getElementById('OWNER').value;
+            let start_time = document.getElementById('create_time').value;
+            let end_time = document.getElementById('end_time').value;
+            let pageNum = document.getElementById('pageNum').value;
+            let pageSize = document.getElementById('pageSize').value;
+            document.location.href = "/?owner=" + owner + "&startTime=" + start_time + "&entTime=" + end_time + "&pageNum=" + pageNum + "&pageSize=" + pageSize;
+        }
+
+        function changePage(pageNum) {
+            document.getElementById("pageNum").value = pageNum;
+            query()
+        }
+
+        function prePage() {
+            let nowPageNum = parseInt(document.getElementById('pageNum').value);
+            document.getElementById("pageNum").value = nowPageNum - 1;
+            query()
+        }
+
+        function nextPage() {
+            let nowPageNum = parseInt(document.getElementById('pageNum').value);
+            document.getElementById("pageNum").value = nowPageNum + 1;
+            query()
+        }
+
+    </script>
+</head>
+<body>
+<!-- 导航栏 -->
+<nav class="navbarHeader">
+
+    <div>Automatic AI Model Greenness Track Toolkit</div>
+    <div>Dashboard
+        <input type="text" hidden="hidden" id="pageNum" value="{{rep.req.pageNum}}" class="form-control">
+    </div>
+</nav>
+<!-- 面包屑 -->
+<div class="bread">
+    <span>Home</span>
+    <span>/</span>
+    <span>Dashboard</span>
+</div>
+<!-- 内容 -->
+<div class="content">
+    <!-- 查询 -->
+    <div class="search">
+        <div class="row g-3 align-items-center">
+            <div class="col-auto">
+                <label for="OWNER" class="col-form-label">OWNER</label>
+            </div>
+            <div class="col-auto">
+                <input type="text" value="{{rep.req.owner}}" id="OWNER" class="form-control">
+            </div>
+            <div class="col-auto">
+                <label for="create_time" class="col-form-label">EXPERIMENT TIME</label>
+            </div>
+            <div class="col-auto">
+                <input type="datetime-local" value="{{rep.req.startTime}}" id="create_time" class="form-control">
+            </div>
+            <div class="col-auto">
+                <label class="col-form-label">~</label>
+            </div>
+            <div class="col-auto">
+                <input type="datetime-local" id="end_time" value="{{rep.req.endTime}}" class="form-control">
+            </div>
+            <div class="col-auto">
+                <button class="btn" onclick="
+                document.getElementById('pageNum').value =1;
+                query()">QUERY</button>
+            </div>
+        </div>
+    </div>
+    <div class="tp">
+        <!-- 表格 -->
+        <table class="table table-bordered">
+            <tr>
+                <th scope="col">EXPERIMENT ID</th>
+                <th scope="col">OWNER</th>
+                <th scope="col">CREATED TIME</th>
+                <th scope="col">END TIME</th>
+                <th scope="col">CPU NUM</th>
+                <th scope="col">GPU NUM</th>
+                <th scope="col">STATUS</th>
+                <th scope="col">OPERATION</th>
+            </tr>
+            <tbody>
+            {% if rep %}
+            {% for d in rep.data.list %}
+            <tr>
+                <td>{{d.eid}}</td>
+                <td>{{d.owner}}</td>
+                <td>{{d.createTime}}</td>
+                <td>{% if d.endTime %}{{d.endTime}}{% endif %}</td>
+                <td>{{d.cpuNun}}</td>
+                <td>{{d.gpuNum}}</td>
+                <td>{{d.status}}</td>
+                <td><a href="/{{d.eid}}">VIWE REPORT</a></td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            </tbody>
+        </table>
+        <!-- 分页 -->
+        <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-end">
+
+                <li class="page-item {% if rep.hasPrePage==False%}disabled{%endif%}">
+                    <a class="page-link" aria-label="Previous" onclick="prePage()">
+                        <span aria-hidden="true">&lt;</span>
+                    </a>
+                </li>
+                {% if rep.showFirstPage%}
+                <li class="page-item"><a class="page-link" href="#" onclick="changePage(1)">1</a></li>
+                <li class="page-item" style="margin: -7px 10px 0 10px;font-size: 25px">
+                    <span>...</span>
+                </li>
+                {% endif%}
+                {% for page in rep.printPage%}
+                {% if page == rep.data.page_no%}
+                <li class="page-item active"><a class="page-link" href="#">{{page}}</a></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="#" onclick="changePage({{page}})">{{page}}</a></li>
+                {% endif %}
+                {% endfor%}
+                {% if rep.showLastPage%}
+                <li class="page-item" style="margin: -7px 10px 0 10px;font-size: 25px">
+                    <span>...</span>
+                </li>
+                <li class="page-item"><a class="page-link" href="#" onclick="changePage({{rep.totalPage}})">{{rep.totalPage}}</a>
+                </li>
+                {% endif%}
+
+                <li class="page-item {% if rep.hasNextPage==False%}disabled{%endif%}">
+                    <a class="page-link" aria-label="Next" href="#" onclick="nextPage()">
+                        <span aria-hidden="true">&gt;</span>
+                    </a>
+                </li>
+                <li class="page-item">
+                    <div class="row align-items-center">
+                        <div class="col-4">
+                            <span style="margin-left: 5px">showing</span>
+                        </div>
+                        <div class="col-7">
+                            <select class="form-select" id="pageSize" onchange="
+                              document.getElementById('pageNum').value =1;
+                              query();
+                            "
+                                    aria-label="Default select example">
+                                <option {%if rep.req.pageSize==10%} selected {%endif%} value="10">10条</option>
+                                <option {%if rep.req.pageSize==20%} selected {%endif%} value="20">20条</option>
+                                <option {%if rep.req.pageSize==50%} selected {%endif%} value="50">50条</option>
+                                <option {%if rep.req.pageSize==100%} selected {%endif%} value="100">100条</option>
+                            </select>
+                        </div>
+                    </div>
+                </li>
+
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

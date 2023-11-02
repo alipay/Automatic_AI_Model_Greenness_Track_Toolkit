@@ -1,0 +1,40 @@
+// python -m grpc_tools.protoc -I greenness_track_toolkit/rpc/protos --python_out=greenness_track_toolkit/rpc --pyi_out=greenness_track_toolkit/rpc --grpc_python_out=greenness_track_toolkit/rpc greenness_track_toolkit/rpc/protos/agent_info_service.proto
+
+syntax = "proto3";
+package greenness_track_toolkit.rpc;
+import "common.proto";
+option py_generic_services = true;
+message EidRequest{
+  string masterAgentHostname = 1;
+  bool isMaster = 2;
+  string ownerName = 3;
+  string startTime = 4;
+}
+message UploadComputerInfoRequest{
+  string eid = 1;
+  string agent_ip = 2;
+  string cpuBrand = 3;
+  int32 cpuKernelNums = 4;
+  string cpuClock = 5;
+  string gpuBrand = 6;
+  int32 gpuNums = 7;
+  string gpuClock = 8;
+  int32 rank=9;
+}
+
+message EidResponse{
+  ResultCode resultCode = 1;
+  string message = 2;
+  string eid = 3;
+}
+
+message UploadStatusRequest{
+  string eid = 1;
+  string status = 2;
+}
+
+service AgentInfoService{
+  rpc getUniqueEid(EidRequest) returns (EidResponse);
+  rpc uploadComputerInfo(UploadComputerInfoRequest) returns(BaseResponse);
+  rpc uploadStatus(UploadStatusRequest) returns(BaseResponse);
+}

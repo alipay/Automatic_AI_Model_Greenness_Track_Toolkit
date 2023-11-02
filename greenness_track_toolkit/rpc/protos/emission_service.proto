@@ -1,0 +1,16 @@
+//python -m grpc_tools.protoc -I greenness_track_toolkit/rpc/protos --python_out=greenness_track_toolkit/rpc --grpc_python_out=greenness_track_toolkit/rpc greenness_track_toolkit/rpc/protos/emission_service.proto
+syntax = "proto3";
+package greenness_track_toolkit.rpc;
+import "common.proto";
+
+message InsertEmissionRequest{
+  string eid = 1;
+  string agent_ip = 2;
+  string upload_time = 3;
+  float energy = 4;
+  float flops = 5;
+  float co2 = 6;
+}
+service EmissionService{
+  rpc insertEmissionData(InsertEmissionRequest) returns (BaseResponse);
+}

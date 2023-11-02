@@ -1,0 +1,12 @@
+import enum
+
+TF_CONFIG_KEY = "TF_CONFIG"
+TF_MASTER_INDEX = 0
+TASK_LOCAL_TYPE = "local"
+
+
+class TaskStatus(enum.Enum):
+    INITIALIZING = "INITIALIZING"
+    CANCEL = "CANCEL"
+    RUNNING = "RUNNING"
+    FINISH = "FINISH"
